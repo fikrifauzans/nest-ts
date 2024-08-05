@@ -1,36 +1,14 @@
-# DDD Pattern Nest Typescript
-    src/
-    ├── common/
-    │   ├── decorators/
-    │   ├── filters/
-    │   ├── guards/
-    │   ├── interceptors/
-    │   └── pipes/
-    ├── config/
-    ├── modules/
-    │   ├── auth/
-    │   │   ├── controllers/
-    │   │   ├── dtos/
-    │   │   ├── services/
-    │   │   └── auth.module.ts
-    │   ├── users/
-    │   │   ├── controllers/
-    │   │   ├── dtos/
-    │   │   ├── entities/
-    │   │   ├── repositories/
-    │   │   ├── services/
-    │   │   └── users.module.ts
-    │   └── other-module/
-    ├── shared/
-    │   ├── dtos/
-    │   ├── entities/
-    │   ├── repositories/
-    │   ├── services/
-    │   └── utils/
-    ├── app.module.ts
-    ├── main.ts
+# Install APP BACK END
 
+1. copy .env.example menjadi .env
 
+2. buat database (Postgres) dan sesuaikan dengan configurasi .env
 
-# Create Migration
-- npx typeorm migration:create -n CreateEmployeeTable
+3. Jalankan Command 
+   - npm install
+
+4. Jalankan Command
+   - npm run migration:up
+
+5. jalankan server dengan Command 
+   - npm run start:dev
