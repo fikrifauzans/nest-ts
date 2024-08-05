@@ -15,17 +15,22 @@ export class EmployeeController {
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async create(@Body() body: any, @Req() req: any) {
-    if (body.photoPath) {
-      const { filePath, fileName } = (await this.employeeService.getFileService()).saveBase64File(body.photoPath)
-      const photo: string = (`${req.protocol}://${req.get('Host')}/public/${fileName}`);
-      const createEmployeeDto: CreateEmployeeDto = { ...body, photo, photoPath: filePath }
-      const employee: any = await this.employeeService.create(createEmployeeDto);
-      return formatResponse(HttpStatus.CREATED, 'Employee created successfully', employee);
-    } else {
-      const employee: any = await this.employeeService.create(body);
-      return formatResponse(HttpStatus.CREATED, 'Employee created successfully', employee);
+    let employee: any;
+    try {
+      if (body.photoPath) {
+        const { filePath, fileName } = (await this.employeeService.getFileService()).saveBase64File(body.photoPath);
+        const photo: string = `${req.protocol}://${req.get('Host')}/public/${fileName}`;
+        const createEmployeeDto: CreateEmployeeDto = { ...body, photo, photoPath: filePath };
+        employee = await this.employeeService.create(createEmployeeDto);
+      } else {
+        employee = await this.employeeService.create(body);
+      }
+      console.log('Employee created:', employee);
+    } catch (error) {
+      console.error('Error creating employee:', error);
+      throw new Error('Failed to create employee');
     }
-
+    return formatResponse(HttpStatus.CREATED, 'Employee created successfully', employee);
   }
 
 
@@ -52,8 +57,8 @@ export class EmployeeController {
       const photo: string = (`${req.protocol}://${req.get('Host')}/public/${fileName}`);
       const updateEmployeeDto: UpdateEmployeeDto = { ...body, photo, photoPath: filePath }
       const updatedEmployee = await this.employeeService.update(id, updateEmployeeDto);
-      if (!updatedEmployee)  throw new NotFoundException('Employee not found');
-    
+      if (!updatedEmployee) throw new NotFoundException('Employee not found');
+
       return formatResponse(HttpStatus.OK, 'Employee updated successfully', updatedEmployee);
     } else {
       return formatResponse(HttpStatus.OK, 'Employee updated successfully', body);
