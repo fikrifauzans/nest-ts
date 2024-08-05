@@ -16,7 +16,9 @@ export class EmployeeRepository extends GeneralRepository {
     super(); 
   }
   
-  async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
+  async create(createEmployeeDto: any): Promise<Employee> {
+ 
+    
     return this.employeeRepository.save(createEmployeeDto);
   }
 

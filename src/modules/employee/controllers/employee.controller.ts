@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, HttpStatus, NotFoundException, Query, Request, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, HttpStatus, NotFoundException, Query, UseInterceptors, Req } from '@nestjs/common';
 import { EmployeeService } from '../services/employee.service';
 import { CreateEmployeeDto } from '../dtos/create-employee.dto';
 import { UpdateEmployeeDto } from '../dtos/update-employee.dto';
@@ -14,8 +14,12 @@ export class EmployeeController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
-  async create(@Body() createEmployeeDto: CreateEmployeeDto) { 
-    const employee = await this.employeeService.create(createEmployeeDto);    
+  async create(@Body() body: any, @Req() req: any) {
+    const { filePath, fileName } = (await this.employeeService.getFileService()).saveBase64File(body.photoPath)
+    const photo: string = (`${req.protocol}://${req.get('Host')}/public/${fileName}`);
+    const createEmployeeDto: CreateEmployeeDto = { ...body, photo, photoPath: filePath }
+
+    const employee = await this.employeeService.create(createEmployeeDto);
     return formatResponse(HttpStatus.CREATED, 'Employee created successfully', employee);
   }
 
@@ -23,7 +27,7 @@ export class EmployeeController {
   @Get()
   async findAll(@Query() query: QueryEmployee) {
     const { data, pagination } = await this.employeeService.findAll(query);
-    return formatResponse(HttpStatus.OK, 'Employees retrieved successfully', data, {pagination});
+    return formatResponse(HttpStatus.OK, 'Employees retrieved successfully', data, { pagination });
   }
 
   @Get(':id')

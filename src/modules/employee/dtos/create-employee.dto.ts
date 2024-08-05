@@ -1,4 +1,5 @@
-import { IsString, IsInt, IsDate, IsOptional } from 'class-validator';
+import { Base64Interface } from '@/common/interface/base64.interface';
+import { IsString, IsInt, IsDate, IsOptional, isObject } from 'class-validator';
 
 export class CreateEmployeeDto {
   @IsString()
@@ -17,12 +18,10 @@ export class CreateEmployeeDto {
   joinDate: Date;
 
   @IsOptional()
-  @IsString()
   photo?: string;
 
   @IsOptional()
-  @IsString()
-  photoPath?: string;
+  photoPath?: any;
 
   @IsString()
   status: string;
