@@ -33,4 +33,8 @@ export class QueryEmployee extends TableDto {
   @IsOptional()
   @IsString()
   status?: string;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
 }

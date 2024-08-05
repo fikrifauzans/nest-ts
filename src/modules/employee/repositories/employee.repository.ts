@@ -16,20 +16,27 @@ export class EmployeeRepository extends GeneralRepository {
     super(); 
   }
   
-  async create(createEmployeeDto: any): Promise<Employee> {
- 
-    
+  async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
     return this.employeeRepository.save(createEmployeeDto);
   }
 
   async findAll(query: QueryEmployee): Promise<{ data: Employee[], pagination: any }> {
     const qb = this.employeeRepository.createQueryBuilder('employee');
-    if (query.name) qb.andWhere('employee.name LIKE :name', { name: `%${query.name}%` });
+    
+    if (query.name) qb.andWhere('employee.name ILIKE :name', { name: `%${query.name}%` });
     if (query.number) qb.andWhere('employee.number = :number', { number: query.number });
-    if (query.position) qb.andWhere('employee.position LIKE :position', { position: `%${query.position}%` });
-    if (query.department) qb.andWhere('employee.department LIKE :department', { department: `%${query.department}%` });
+    if (query.position) qb.andWhere('employee.position ILIKE :position', { position: `%${query.position}%` });
+    if (query.department) qb.andWhere('employee.department ILIKE :department', { department: `%${query.department}%` });
     if (query.joinDate) qb.andWhere('employee.joinDate = :joinDate', { joinDate: query.joinDate });
-    if (query.status) qb.andWhere('employee.status LIKE :status', { status: `%${query.status}%` });
+    if (query.status) qb.andWhere('employee.status ILIKE :status', { status: `%${query.status}%` });
+
+    if (query.search) {
+      qb.andWhere(
+        'employee.name ILIKE :search OR employee.number ILIKE :search OR employee.position ILIKE :search OR employee.department ILIKE :search OR employee.joinDate::text ILIKE :search OR employee.status ILIKE :search', 
+        { search: `%${query.search}%` }
+      );
+    }
+
     return this.paginateAndSorting(query, qb);
   }
 
